@@ -141,9 +141,9 @@ class Model:
 
     # Register a person to a curriculum.
     def registerPersonToCurriculum(self, idPerson, idCurriculum):
-        self.cursor.execute("""
-        TODO13
-        """, (idPerson, idCurriculum))
+        self.cursor.execute(f"""
+        INSERT INTO Curr_pers(id_pers, id_curr) VALUES({idPerson, idCurriculum}))
+        """)
         self.connection.commit()
 
     # Register a course to a curriculum.
