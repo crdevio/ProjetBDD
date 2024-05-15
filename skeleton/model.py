@@ -7,7 +7,7 @@ import psycopg2.extras
 
 class Model:
     def __init__(self):
-        self.connection = psycopg2.connect("dbname='TODO' user='TODO' host='psql.eleves.ens.fr' password='TODO'")
+        self.connection = psycopg2.connect("dbname='glecorre' user='glecorre' host='psql.eleves.ens.fr' password='c9Wvl2so'")
         self.connection.autocommit = True
         self.cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
