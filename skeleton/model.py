@@ -24,24 +24,26 @@ class Model:
 
     # Create a new person.
     def createPerson(self, lastname, firstname, address, phone):
-        self.cursor.execute("""
-        TODO01
-        """, (lastname, firstname, address, phone))
+        self.cursor.execute(f"""
+        INSERT INTO  Persons(last_name,first_name,phone,address)
+        VALUES ({lastname}, {firstname}, {phone},{address}); 
+        """)
         self.connection.commit()
 
     # Return a list of (id, lastname, firstname, address, phone,
     # number of curriculums) corresponding to all persons.
     def listPersons(self):
         self.cursor.execute("""
-        TODO02
+        SELECT * FROM Persons
         """)
         return self.cursor.fetchall()
 
     # Delete a person given its ID (beware of the foreign constraints!).
     def deletePerson(self, idPerson):
-        self.cursor.execute("""
-        TODO03
-        """, idPerson)
+        self.cursor.execute(f"""
+        DELETE FROM Persons
+        WHERE id={idPerson};
+        """)
         self.connection.commit()
 
 ##############################################
@@ -50,9 +52,10 @@ class Model:
 
     # Create a curriculum.
     def createCurriculum(self, name, secretary, director):
-        self.cursor.execute("""
-        TODO04
-        """, (name, secretary, director))
+        self.cursor.execute(f"""
+        INSERT INTO Curriculums(title, secretary, director)
+        VALUES ({name},{secretary},{director})
+        """)
         self.connection.commit()
 
     # Return a list of (id,name of curriculum,director lastname,
@@ -60,15 +63,16 @@ class Model:
     # corresponding to all curriculums.
     def listCurriculums(self):
         self.cursor.execute("""
-        TODO05
+        SELECT * FROM Curriculums
         """)
         return self.cursor.fetchall()
 
     # Delete a curriculum given its ID (beware of the foreign constraints!).
     def deleteCurriculum(self, idCurriculum):
         self.cursor.execute("""
-        TODO06
-        """, idCurriculum)
+        DELETE FROM Curriculums
+        WHERE id={idCurriculum}
+        """)
         self.connection.commit()
 
 ##############################################
@@ -77,9 +81,10 @@ class Model:
 
     # Create a course.
     def createCourse(self, name, idProfessor):
-        self.cursor.execute("""
-        TODO07
-        """, (name, idProfessor))
+        self.cursor.execute(f"""
+        INSERT INTO Courses(title,teacher)
+        VALUES ({name},{idProfessor})
+        """)
         self.connection.commit()
 
     # Return a list of (course id, course name, teacher id,
@@ -87,16 +92,17 @@ class Model:
     # to all the courses.
     def listCourses(self):
         self.cursor.execute("""
-        TODO08
+        SELECT * FROM Courses
         """)
         return self.cursor.fetchall()
 
     # Delete a given course (beware that the course might be registered to
     # curriculum, and have grades that should also be deleted).
     def deleteCourse(self, idCourse):
-        self.cursor.execute("""
-        TODO09
-        """, idCourse)
+        self.cursor.execute(f"""
+        DELETE FROM Courses
+        WHERE id={idCourse}
+        """)
         self.connection.commit()
 
 

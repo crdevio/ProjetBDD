@@ -10,7 +10,7 @@ h1 {
 }
 
 header nav ul {
-    align: center;
+    text-align: center;
     padding: 0;
     height: 0;
     margin: 0;
@@ -22,7 +22,7 @@ header nav ul {
 }
 
 header nav ul li {
-    color: #999;
+    color: #616060;
 }
     
 header nav ul li a {
@@ -98,4 +98,17 @@ article form {
     border-radius: 25px;
     padding: 10px;
     margin: 40px;
+}
+
+footer
+{
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: 61px;
+    margin: 0px;
+    color: rgb(255,255,255);
+    text-align: center;
+    background-color: rgb(80, 79, 78);
 }
