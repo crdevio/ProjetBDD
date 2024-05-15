@@ -25,6 +25,22 @@ CREATE TABLE Courses (
     id SERIAL PRIMARY KEY 
 );  
 
+CREATE TABLE Ects (
+    id_courses INT REFERENCES Courses(id),
+    id_curr INT REFERENCES Curriculums(id),
+    nombre INT
+);
+CREATE TABLE Curr_pers(
+    id_pers INT REFERENCES Persons(id),
+    id_curr INT REFERENCES Curriculums(id)
+);
+CREATE TABLE Curr_courses(
+    id_curr INT REFERENCES Curriculums(id),
+    id_courses INT REFERENCES Courses(id)
+);
+
+
+
 CREATE TABLE Validations (
     title TEXT,
     id SERIAL PRIMARY KEY,
