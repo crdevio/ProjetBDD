@@ -1,7 +1,10 @@
-DROP TABLE Curriculums;
+DROP TABLE Ects;
 DROP TABLE Notes;
+DROP TABLE Curr_pers;
+DROP TABLE Curr_courses;
 DROP TABLE Validations;
 DROP TABLE Courses;
+DROP TABLE Curriculums;
 DROP TABLE Persons;
 
 CREATE TABLE Persons (
@@ -30,16 +33,16 @@ CREATE TABLE Ects (
     id_curr INT REFERENCES Curriculums(id),
     nombre INT
 );
+
 CREATE TABLE Curr_pers(
     id_pers INT REFERENCES Persons(id),
     id_curr INT REFERENCES Curriculums(id)
 );
+
 CREATE TABLE Curr_courses(
     id_curr INT REFERENCES Curriculums(id),
     id_courses INT REFERENCES Courses(id)
 );
-
-
 
 CREATE TABLE Validations (
     title TEXT,
