@@ -112,9 +112,10 @@ class Model:
 
     # Get the name of a given curriculum.
     def getNameOfCurriculum(self, id):
-        self.cursor.execute("""
-        TODO10
-        """, id)
+        self.cursor.execute(f"""
+        SELECT title FROM Curriculums
+        WHERE id = {id}
+        """)
         # suppose that there is a solution
         return self.cursor.fetchall()[0][0]
 
@@ -122,9 +123,9 @@ class Model:
     # last name and first name, ECTS) corresponding to the courses
     # registered to a given curriculum.
     def listCoursesOfCurriculum(self, idCurriculum):
-        self.cursor.execute("""
-        TODO11
-        """, (idCurriculum))
+        self.cursor.execute(f"""
+        SELECT ()
+        """)
         return self.cursor.fetchall()
 
     #  !! HARD !!
