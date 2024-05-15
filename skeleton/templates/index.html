@@ -5,4 +5,23 @@
 
 <body>Le site de gestion de notes fait par les étudiants pour les étudiants</body>
 
+<br>
+
+<canvas width="300" height="100">
+    Désolé, votre navigateur ne prend pas en charge &lt;canvas&gt;.
+</canvas>
+  
+
+<script type="text/javascript">
+    var canvas = document.querySelector("canvas");
+    var ctx = canvas.getContext("2d");
+    var myImage = new Image();
+    myImage.onload = function () {
+        alert("ok");
+        ctx.drawImage(myImage,0,0);
+    }
+    myImage.src = "static/images/favicon.png";
+
+</script>
+
 {% endblock %}
