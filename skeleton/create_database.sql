@@ -21,6 +21,7 @@ CREATE TABLE Curriculums (
 CREATE TABLE Courses (
     title TEXT,
     teacher INT REFERENCES Persons(id),
+    id_curriculum INT REFERENCES Curriculums(id),
     id SERIAL PRIMARY KEY 
 );  
 
