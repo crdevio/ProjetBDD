@@ -149,16 +149,20 @@ class Model:
 
     # Register a course to a curriculum.
     def registerCourseToCurriculum(self, idCourse, idCurriculum, ects):
-        self.cursor.execute("""
-        TODO14
-        """, (idCourse, idCurriculum, ects))
+        self.cursor.execute(f"""
+        INSERT INTO Curr_courses(id_courses, id_curr) VALUES({idCourse, idCurriculum}));
+        INSERT INTO Ects(id_courses, id_curr, nombre) VALUES({idCourse, idCurriculum, ects})
+        """)
         self.connection.commit()
 
     # Unregister a course to a curriculum.
     def deleteCourseFromCurriculum(self, idCourse, idCurriculum):
-        self.cursor.execute("""
-        TODO15
-        """, (idCurriculum, idCourse))
+        self.cursor.execute(f"""
+        DELETE FROM Curr_courses
+        WHERE id_courses={idCourse} AND id_curr={idCurriculum};
+        DELETE FROM Ects
+        WHERE id_courses={idCourse} AND id_curr={idCurriculum};
+        """)
         self.connection.commit()
 
 ##############################################
