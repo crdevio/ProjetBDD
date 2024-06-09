@@ -124,7 +124,11 @@ class Model:
     # registered to a given curriculum.
     def listCoursesOfCurriculum(self, idCurriculum):
         self.cursor.execute(f"""
-        SELECT ()
+        SELECT (co.id,co.title,co.teacher, pe.last_name, pe.first_name, ects.nombre) FROM Curr_courses cuc
+        WHERE cuc.id_curr = {idCurriculum}
+        JOIN Courses co ON co.id = cuc.id_courses
+        JOIN Persons pe ON pe.id = co.teacher
+        JOIN Ects ects ON ects.id_courses = co.id AND ects.id_curr = cuc.id_curr
         """)
         return self.cursor.fetchall()
 
