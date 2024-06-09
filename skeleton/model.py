@@ -308,11 +308,11 @@ class Model:
     # by decreasing date of validation.
     def listValidationsOfStudent(self, idStudent):
         self.cursor.execute(f"""
-        SELECT Validations.id, Validations.date, Curriculums.title, Courses.title, Validations.title, ROUND(Grades.grade::numeric, 2)
+        SELECT Validations.id, Validations.validation_date, Curriculums.title, Courses.title, Validations.title, ROUND(Notes.note::numeric, 2)
         FROM Persons
         JOIN Notes ON Notes.id_person = Persons.id
         JOIN Validations ON Validations.id = Notes.id_validation
-        JOIN Curr_Courses ON Curr_Courses.course = Validations.course
+        JOIN Curr_Courses ON Curr_Courses.id_courses = Validations.course
         JOIN Curriculums ON Curr_Courses.id_curr = Curriculums.id
         JOIN Courses ON Courses.id = Validations.course
         WHERE Persons.id = {idStudent}
@@ -327,7 +327,7 @@ class Model:
     def listCurriculumsOfStudent(self, idStudent):
         self.cursor.execute("""
         WITH NotesAux AS (
-            SELECT cup.id_pers AS id_p, val.course AS id_c, SUM(not.note * val.coeff)/sum(val.coeff) AS note 
+            SELECT cup.id_pers AS id_p, val.course AS id_c, SUM(Notes.note * val.coeff)/sum(val.coeff) AS note 
             FROM Curr_courses cuc
             JOIN Validations val ON val.course = cuc.id_courses
             JOIN Curr_pers cup ON cup.id_curr = cuc.id_curr
