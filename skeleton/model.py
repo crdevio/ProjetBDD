@@ -23,8 +23,8 @@ class Model:
     # Create a new person.
     def createPerson(self, lastname, firstname, address, phone):
         self.cursor.execute(f"""
-        INSERT INTO  Persons(last_name,first_name,phone_number,adress)
-        VALUES ({lastname}, {firstname}, {phone},{address}); 
+        INSERT INTO  Persons(last_name, first_name, phone_number, adress)
+        VALUES ('{lastname}', '{firstname}', '{phone}', '{address}'); 
         """)
         self.connection.commit()
 
@@ -52,7 +52,7 @@ class Model:
     def createCurriculum(self, name, secretary, director):
         self.cursor.execute(f"""
         INSERT INTO Curriculums(title, secretary, director)
-        VALUES ({name},{secretary},{director})
+        VALUES ('{name}', '{secretary}', '{director}')
         """)
         self.connection.commit()
 
@@ -81,7 +81,7 @@ class Model:
     def createCourse(self, name, idProfessor):
         self.cursor.execute(f"""
         INSERT INTO Courses(title,teacher)
-        VALUES ({name},{idProfessor})
+        VALUES ('{name}',{idProfessor})
         """)
         self.connection.commit()
 
@@ -102,7 +102,6 @@ class Model:
         WHERE id={idCourse}
         """)
         self.connection.commit()
-
 
 ##############################################
 ###### Queries for tab  CURRICULUM/<ID> ######
