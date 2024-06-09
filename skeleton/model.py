@@ -251,8 +251,8 @@ class Model:
     # Add a validation to a given course.
     def addValidationToCourse(self, name, coef, date, idCourse):
         self.cursor.execute(f"""
-        INSERT INTO Validations (title, course, date, coefficient)
-        VALUES ({name}, {idCourse}, {date}, {coef})
+        INSERT INTO Validations (title, course, validation_date, coeff)
+        VALUES ('{name}', {idCourse}, '{date}', {coef})
         """)
         self.connection.commit()
 
