@@ -134,13 +134,21 @@ class Model:
     # or is not registered to a course, he should have 0.
     def averageGradesOfStudentsInCurriculum(self, idCurriculum):
         self.cursor.execute(f"""
-        SELECT (last name, first name, TODO) 
-        FROM (((SELECT * FROM (SELECT Courses JOIN on Validations on Courses.id = Validations.course))
-            JOIN (SELECT * FROM Ects WHERE id_curr = {idCurriculum}) 
-                on Courses.id = id_courses)
-            JOIN (SELECT Persons.id FROM (Persons JOIN Curr_pers on Persons.id = id_pers) WHERE id_curr = {idCurriculum}))
-
-        """, idCurriculum)
+        WITH NotesAux AS (
+            SELECT cup.id_pers AS id_p, val.course AS id_c, SUM(not.note * val.coeff)/sum(val.coeff) AS note FROM Curr_courses cuc ON cuc.id_curr = {idCurriculum}
+            JOIN Validations val ON val.course = cuc.id_courses
+            JOIN Curr_pers cup ON cup.id_curr = cuc.id_curr
+            LEFT JOIN Notes not ON not.id_person = cup.id_pers AND not.id_validation = val.id
+            GROUP BY cup.pers, val.course
+        )
+        SELECT last_name, first_name, ROUND((sum(COALESCE(NotesAux.note,0) * COALESCE(Ects.nombre,0)) / sum(Ects.nombre))::numeric, 2)
+        FROM Persons per
+        JOIN Curr_pers cup ON cup.id_pers = per.id AND cup.id_curr = {idCurriculum}
+        LEFT JOIN NotesAux not ON not.id_per = cup.id_pers
+        LEFT JOIN Curr_courses cuc ON cuc.id_courses = NotesAux.id_c
+        JOIN Ects ON Ects.id_courses =  cuc.id_courses AND Ects.id_curr = cup.id_curr
+        GROUP BY per.id
+        """)
         return self.cursor.fetchall()
 
     # Register a person to a curriculum.
