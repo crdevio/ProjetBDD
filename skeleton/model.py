@@ -258,9 +258,13 @@ class Model:
    # Return a list (grade, lastname, firstname) of grades for
    # a given validation.
     def listGradesOfValidation(self, idValidation):
-        self.cursor.execute("""
-        TODO23
-        """, idValidation)
+        self.cursor.execute(f"""
+        SELECT ROUND(Notes.note::numeric, 2), Persons.last_name, Persons.first_name
+        FROM Notes
+        JOIN Persons ON Notes.id_person = Persons.id
+        WHERE Notes.id_validation = {idValidation}
+        ORDER BY Notes.note DESC
+        """)
         return self.cursor.fetchall()
 
     # Get the complete name of a validation given its ID. The
