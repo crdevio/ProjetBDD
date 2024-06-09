@@ -196,9 +196,10 @@ class Model:
     def listCurriculumsOfCourse(self, idCourse):
         self.cursor.execute(f"""
         SELECT Curriculums.id, Curriculums.title, Ects.nombre  
-        FROM Curriculums JOIN (SELECT * FROM Courses WHERE Courses.id = {idCourse}) ON Curriculums.id = id_curriculum
+        FROM Curriculums JOIN Courses ON Curriculums.id = id_curriculum
         JOIN Ects ON Ects.id_courses = {idCourse} AND Ects.id_curr = Curriculums.id
         JOIN Curr_courses ON Courses.id = Curr_courses.id_courses
+        WHERE Courses.id = {idCourse}
         """)
         return self.cursor.fetchall()
 
@@ -233,13 +234,13 @@ class Model:
         SELECT 
             Validations.id, Validations.validation_date, Curriculums.title,
             Persons.last_name, Persons.first_name, Validations.title,
-            Notes.note, Validations.coefficient
+            Notes.note, Validations.coeff
         FROM Notes
         JOIN Validations ON Notes.id_validation = Validations.id
         JOIN Courses ON Validations.course = Courses.id
         JOIN Curriculums ON Courses.id_curriculum = Curriculums.id
         JOIN Persons ON Notes.id_person = Persons.id
-        ORDER BY Validations.date DESC
+        ORDER BY Validations.validation_date DESC
         """)
         return self.cursor.fetchall()
 
@@ -258,7 +259,6 @@ class Model:
         VALUES ({idStudent}, {idValidation}, {grade})
         """)
         self.connection.commit()
-
 ##############################################
 ######       Queries for tab            ######
 ######      COURSE/<ID1>/<ID2           ######
