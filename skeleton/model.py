@@ -125,10 +125,10 @@ class Model:
     def listCoursesOfCurriculum(self, idCurriculum):
         self.cursor.execute(f"""
         SELECT (co.id,co.title,co.teacher, pe.last_name, pe.first_name, ects.nombre) FROM Curr_courses cuc
-        WHERE cuc.id_curr = {idCurriculum}
         JOIN Courses co ON co.id = cuc.id_courses
         JOIN Persons pe ON pe.id = co.teacher
         JOIN Ects ects ON ects.id_courses = co.id AND ects.id_curr = cuc.id_curr
+        WHERE cuc.id_curr = {idCurriculum}
         """)
         return self.cursor.fetchall()
 
@@ -141,17 +141,18 @@ class Model:
     def averageGradesOfStudentsInCurriculum(self, idCurriculum):
         self.cursor.execute(f"""
         WITH NotesAux AS (
-            SELECT cup.id_pers AS id_p, val.course AS id_c, SUM(not.note * val.coeff)/sum(val.coeff) AS note FROM Curr_courses cuc WHERE cuc.id_curr = {idCurriculum}
+            SELECT cup.id_pers AS id_p, val.course AS id_c, SUM(notes.note * val.coeff)/sum(val.coeff) AS note 
+            FROM Curr_courses cuc
             JOIN Validations val ON val.course = cuc.id_courses
             JOIN Curr_pers cup ON cup.id_curr = cuc.id_curr
-            LEFT JOIN Notes not ON not.id_person = cup.id_pers AND not.id_validation = val.id
-            GROUP BY cup.pers, val.course
+            LEFT JOIN Notes notes ON notes.id_person = cup.id_pers AND notes.id_validation = val.id
+            GROUP BY cup.id_pers, val.course
         )
-        SELECT last_name, first_name, ROUND((sum(COALESCE(NotesAux.note,0) * COALESCE(Ects.nombre,0)) / sum(Ects.nombre))::numeric, 2)
+        SELECT last_name, first_name, ROUND((sum(COALESCE(note.note,0) * COALESCE(Ects.nombre,0)) / sum(Ects.nombre))::numeric, 2)
         FROM Persons per
         JOIN Curr_pers cup ON cup.id_pers = per.id AND cup.id_curr = {idCurriculum}
-        LEFT JOIN NotesAux not ON not.id_per = cup.id_pers
-        LEFT JOIN Curr_courses cuc ON cuc.id_courses = NotesAux.id_c
+        LEFT JOIN NotesAux note ON note.id_p = cup.id_pers
+        LEFT JOIN Curr_courses cuc ON cuc.id_courses = note.id_c
         JOIN Ects ON Ects.id_courses =  cuc.id_courses AND Ects.id_curr = cup.id_curr
         GROUP BY per.id
         """)
