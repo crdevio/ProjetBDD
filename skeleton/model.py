@@ -134,7 +134,7 @@ class Model:
     def averageGradesOfStudentsInCurriculum(self, idCurriculum):
         self.cursor.execute(f"""
         WITH NotesAux AS (
-            SELECT cup.id_pers AS id_p, val.course AS id_c, SUM(not.note * val.coeff)/sum(val.coeff) AS note FROM Curr_courses cuc ON cuc.id_curr = {idCurriculum}
+            SELECT cup.id_pers AS id_p, val.course AS id_c, SUM(not.note * val.coeff)/sum(val.coeff) AS note FROM Curr_courses cuc WHERE cuc.id_curr = {idCurriculum}
             JOIN Validations val ON val.course = cuc.id_courses
             JOIN Curr_pers cup ON cup.id_curr = cuc.id_curr
             LEFT JOIN Notes not ON not.id_person = cup.id_pers AND not.id_validation = val.id
