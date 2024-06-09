@@ -323,6 +323,20 @@ class Model:
     # average grade is computed as before.
     def listCurriculumsOfStudent(self, idStudent):
         self.cursor.execute("""
-        TODO27
-        """, (idStudent, idStudent))
+        WITH NotesAux AS (
+            SELECT cup.id_pers AS id_p, val.course AS id_c, SUM(not.note * val.coeff)/sum(val.coeff) AS note 
+            FROM Curr_courses cuc
+            JOIN Validations val ON val.course = cuc.id_courses
+            JOIN Curr_pers cup ON cup.id_curr = cuc.id_curr
+            LEFT JOIN Notes not ON not.id_person = cup.id_pers AND not.id_validation = val.id
+            GROUP BY cup.pers, val.course
+        )
+        SELECT cup.title, ROUND((sum(COALESCE(NotesAux.note,0) * COALESCE(Ects.nombre,0)) / sum(Ects.nombre))::numeric, 2)
+        FROM Persons per WHERE per.id = {idStudent}
+        JOIN Curr_pers cup ON cup.id_pers = per.id
+        LEFT JOIN NotesAux not ON not.id_per = cup.id_pers
+        LEFT JOIN Curr_courses cuc ON cuc.id_courses = NotesAux.id_c
+        JOIN Ects ON Ects.id_courses =  cuc.id_courses AND Ects.id_curr = cup.id_curr
+        GROUP BY per.id
+        """, (idStudent))
         return self.cursor.fetchall()
