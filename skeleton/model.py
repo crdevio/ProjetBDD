@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import sys
 import psycopg2
 import psycopg2.extras
@@ -25,7 +23,7 @@ class Model:
     # Create a new person.
     def createPerson(self, lastname, firstname, address, phone):
         self.cursor.execute(f"""
-        INSERT INTO  Persons(last_name,first_name,phone,address)
+        INSERT INTO  Persons(last_name,first_name,phone_number,adress)
         VALUES ({lastname}, {firstname}, {phone},{address}); 
         """)
         self.connection.commit()
@@ -135,8 +133,13 @@ class Model:
     # beware that if a student does not have a grade for a validation
     # or is not registered to a course, he should have 0.
     def averageGradesOfStudentsInCurriculum(self, idCurriculum):
-        self.cursor.execute("""
-        TODO12
+        self.cursor.execute(f"""
+        SELECT (last name, first name, TODO) 
+        FROM (((SELECT * FROM (SELECT Courses JOIN on Validations on Courses.id = Validations.course))
+            JOIN (SELECT * FROM Ects WHERE id_curr = {idCurriculum}) 
+                on Courses.id = id_courses)
+            JOIN (SELECT Persons.id FROM (Persons JOIN Curr_pers on Persons.id = id_pers) WHERE id_curr = {idCurriculum}))
+
         """, idCurriculum)
         return self.cursor.fetchall()
 
@@ -171,34 +174,44 @@ class Model:
 
     # Get the name of a given course.
     def getNameOfCourse(self, id):
-        self.cursor.execute("""
-        TODO16
-        """, id)
+        self.cursor.execute(f"""
+        SELECT title FROM Courses
+        WHERE id = {id}
+        """)
         # suppose that there is a solution
         return self.cursor.fetchall()[0][0]
 
     # Return a list of (id, name, ECTS) of the curriculums in
     # which a given course is registered.
     def listCurriculumsOfCourse(self, idCourse):
-        self.cursor.execute("""
-        TODO17
-        """, (idCourse))
+        self.cursor.execute(f"""
+        SELECT Curriculums.id, Curriculums.title, Ects.nombre  
+        FROM Curriculums JOIN (SELECT * FROM Courses WHERE Courses.id = {idCourse}) ON Curriculums.id = id_curriculum
+        JOIN Ects ON Ects.id_courses = {idCourse} AND Ects.id_curr = Curriculums.id
+        JOIN Curr_courses ON Courses.id = Curr_courses.id_courses
+        """)
         return self.cursor.fetchall()
 
     # Returns a list of (id, date, name, coefficent) for the validations
     # assiociated to a given course.
     def listValidationsOfCourse(self, idCourse):
-        self.cursor.execute("""
-        TODO18
-        """, idCourse)
+        self.cursor.execute(f"""
+        SELECT id, validation_date, title, coeff
+        FROM Validations
+        WHERE course = {idCourse} 
+        """)
         return self.cursor.fetchall()
 
     # Return a list (id, last name, first name) of persons that are
     # registered in a curriculum with the given course
     def listStudentsOfCourse(self, idCourse):
-        self.cursor.execute("""
-        TODO19
-        """, idCourse)
+        self.cursor.execute(f"""
+        SELECT DISTINCT(Persons.id, last_name, first_name)
+        FROM Persons
+        JOIN Curr_pers ON Persons.id = Curr_pers.id_pers
+        JOIN Curr_courses ON Curr_pers.id_curr = Curr_courses.id_curr
+        WHERE id_courses = {idCourse}
+        """)
         return self.cursor.fetchall()
 
     # Return a list (id, date, curriculum name, student last name,
@@ -207,22 +220,33 @@ class Model:
     # sorted by decreasing date of validation.
     def listGradesOfCourse(self, idCourse):
         self.cursor.execute("""
-        TODO20
-        """, idCourse)
+        SELECT 
+            Validations.id, Validations.date, Curriculums.title,
+            Persons.last_name, Persons.first_name, Validations.title,
+            Notes.note, Validations.coefficient
+        FROM Notes
+        JOIN Validations ON Notes.id_validation = Validations.id
+        JOIN Courses ON Validations.course = Courses.id
+        JOIN Curriculums ON Courses.id_curriculum = Curriculums.id
+        JOIN Persons ON Notes.id_person = Persons.id
+        ORDER BY Validations.date DESC
+        """)
         return self.cursor.fetchall()
 
     # Add a validation to a given course.
     def addValidationToCourse(self, name, coef, date, idCourse):
-        self.cursor.execute("""
-        TODO21
-        """, (name, coef, date, idCourse))
+        self.cursor.execute(f"""
+        INSERT INTO Validations (title, course, date, coefficient)
+        VALUES ({name}, {idCourse}, {date}, {coef})
+        """)
         self.connection.commit()
 
     # Add a grade to a student.
     def addGrade(self, idValidation, idStudent, grade):
-        self.cursor.execute("""
-        TODO22
-        """, (idValidation, idStudent, grade))
+        self.cursor.execute(f"""
+        INSERT INTO Notes (id_person, id_validation, note)
+        VALUES ({idStudent}, {idValidation}, {grade})
+        """)
         self.connection.commit()
 
 ##############################################
