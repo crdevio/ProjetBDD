@@ -31,7 +31,7 @@ class Model:
     # Return a list of (id, lastname, firstname, address, phone,
     # number of curriculums) corresponding to all persons.
     def listPersons(self):
-        self.cursor.execute("""
+        self.cursor.execute(f"""
         SELECT id,last_name,first_name,adress,phone_number FROM Persons
         """)
         return self.cursor.fetchall()
@@ -60,7 +60,7 @@ class Model:
     # director firstname, secretary lastname, secretary firstname)
     # corresponding to all curriculums.
     def listCurriculums(self):
-        self.cursor.execute("""
+        self.cursor.execute(f"""
         SELECT Curriculums.id,title,D.last_name, D.first_name, S.last_name, S.first_name FROM Curriculums
         JOIN Persons AS D ON Curriculums.director = D.id
         JOIN Persons AS S ON Curriculums.secretary = S.id
@@ -69,7 +69,13 @@ class Model:
 
     # Delete a curriculum given its ID (beware of the foreign constraints!).
     def deleteCurriculum(self, idCurriculum):
-        self.cursor.execute("""
+        self.cursor.execute(f"""
+        DELETE FROM Ects
+        WHERE id_curr={idCurriculum};
+        DELETE FROM Curr_Pers
+        WHERE id_curr={idCurriculum};
+        DELETE FROM Curr_Courses
+        WHERE id_curr={idCurriculum};
         DELETE FROM Curriculums
         WHERE id={idCurriculum}
         """)
@@ -91,7 +97,7 @@ class Model:
     # teacher last name, teacher first name) corresponding
     # to all the courses.
     def listCourses(self):
-        self.cursor.execute("""
+        self.cursor.execute(f"""
         SELECT Courses.id,title, Persons.id, Persons.last_name, Persons.first_name FROM Courses
         JOIN Persons ON Persons.id = Courses.teacher
         """)
@@ -124,7 +130,7 @@ class Model:
     # registered to a given curriculum.
     def listCoursesOfCurriculum(self, idCurriculum):
         self.cursor.execute(f"""
-        SELECT (co.id,co.title,co.teacher, pe.last_name, pe.first_name, ects.nombre) FROM Curr_courses cuc
+        SELECT DISTINCT co.id,co.title, pe.last_name, pe.first_name, ects.nombre FROM Curr_courses cuc
         JOIN Courses co ON co.id = cuc.id_courses
         JOIN Persons pe ON pe.id = co.teacher
         JOIN Ects ects ON ects.id_courses = co.id AND ects.id_curr = cuc.id_curr
@@ -161,15 +167,15 @@ class Model:
     # Register a person to a curriculum.
     def registerPersonToCurriculum(self, idPerson, idCurriculum):
         self.cursor.execute(f"""
-        INSERT INTO Curr_pers(id_pers, id_curr) VALUES({idPerson, idCurriculum}))
+        INSERT INTO Curr_pers(id_pers, id_curr) VALUES{idPerson, idCurriculum}
         """)
         self.connection.commit()
 
     # Register a course to a curriculum.
     def registerCourseToCurriculum(self, idCourse, idCurriculum, ects):
         self.cursor.execute(f"""
-        INSERT INTO Curr_courses(id_courses, id_curr) VALUES({idCourse, idCurriculum}));
-        INSERT INTO Ects(id_courses, id_curr, nombre) VALUES({idCourse, idCurriculum, ects})
+        INSERT INTO Curr_courses(id_courses, id_curr) VALUES({idCourse},{idCurriculum});
+        INSERT INTO Ects(id_courses, id_curr, nombre) VALUES({idCourse}, {idCurriculum}, {ects})
         """)
         self.connection.commit()
 
@@ -222,7 +228,7 @@ class Model:
     # registered in a curriculum with the given course
     def listStudentsOfCourse(self, idCourse):
         self.cursor.execute(f"""
-        SELECT DISTINCT(Persons.id, last_name, first_name)
+        SELECT DISTINCT Persons.id, last_name, first_name
         FROM Persons
         JOIN Curr_pers ON Persons.id = Curr_pers.id_pers
         JOIN Curr_courses ON Curr_pers.id_curr = Curr_courses.id_curr
@@ -235,7 +241,7 @@ class Model:
     # grades for all the validations and students having taken them,
     # sorted by decreasing date of validation.
     def listGradesOfCourse(self, idCourse):
-        self.cursor.execute("""
+        self.cursor.execute(f"""
         SELECT 
             Validations.id, Validations.validation_date, Curriculums.title,
             Persons.last_name, Persons.first_name, Validations.title,

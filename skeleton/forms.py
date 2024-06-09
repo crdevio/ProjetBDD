@@ -76,5 +76,6 @@ class GradesForm(Form):
     def setNames(self, idCourse):
         with Model() as model:
             l = [(p[0], p[1] + " " + p[2])
-                 for p in model.listStudentsOfCourse(idCourse)]
+                 for p in model.listStudentsOfCourse(idCourse)
+                ]
             self.student.choices = l

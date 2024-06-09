@@ -135,6 +135,7 @@ def showCurriculum(id=None):
 @app.route('/curriculum/<idCurr>/del/<idCou>/')
 def delCourseFromCurriculum(idCurr=None, idCou=None):
     with Model() as model:
+        print(idCurr,idCou)
         model.deleteCourseFromCurriculum(idCou, idCurr)
         return redirect(url_for('showCurriculum', id=idCurr))
 
