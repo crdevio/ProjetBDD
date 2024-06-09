@@ -32,7 +32,7 @@ class Model:
     # number of curriculums) corresponding to all persons.
     def listPersons(self):
         self.cursor.execute("""
-        SELECT * FROM Persons
+        SELECT id,last_name,first_name,adress,phone_number FROM Persons
         """)
         return self.cursor.fetchall()
 
