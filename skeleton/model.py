@@ -314,6 +314,7 @@ class Model:
         JOIN Curriculums ON Curr_Courses.id_curr = Curriculums.id
         JOIN Courses ON Courses.id = Validations.course
         WHERE Persons.id = {idStudent}
+        ORDER BY Validations.validation_date DESC
         """)
         return self.cursor.fetchall()
 
