@@ -92,7 +92,8 @@ class Model:
     # to all the courses.
     def listCourses(self):
         self.cursor.execute("""
-        SELECT * FROM Courses
+        SELECT Courses.id,title, Persons.id, Persons.last_name, Persons.first_name FROM Courses
+        JOIN Persons ON Persons.id = Courses.teacher
         """)
         return self.cursor.fetchall()
 
