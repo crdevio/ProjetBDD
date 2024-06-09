@@ -11,6 +11,7 @@ CREATE TABLE Persons (
     last_name TEXT,
     first_name TEXT,
     phone_number TEXT,
+    adress TEXT,
     id SERIAL PRIMARY KEY 
 );
 
@@ -47,7 +48,9 @@ CREATE TABLE Curr_courses(
 CREATE TABLE Validations (
     title TEXT,
     id SERIAL PRIMARY KEY,
-    course INT REFERENCES Courses(id)
+    course INT REFERENCES Courses(id),
+    validation_date Date DEFAULT CURRENT_DATE,
+    coeff INT
 );
 
 CREATE TABLE Notes (
