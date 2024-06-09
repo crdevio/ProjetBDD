@@ -61,7 +61,9 @@ class Model:
     # corresponding to all curriculums.
     def listCurriculums(self):
         self.cursor.execute("""
-        SELECT * FROM Curriculums
+        SELECT Curriculums.id,title,D.last_name, D.first_name, S.last_name, S.first_name FROM Curriculums
+        JOIN Persons AS D ON Curriculums.director = D.id
+        JOIN Persons AS S ON Curriculums.secretary = S.id
         """)
         return self.cursor.fetchall()
 
