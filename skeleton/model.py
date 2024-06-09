@@ -244,9 +244,12 @@ class Model:
     # is "BDD - exam". You should therefore preppend the name of the
     # course.
     def getNameOfValidation(self, id):
-        self.cursor.execute("""
-        TODO24
-        """, id)
+        self.cursor.execute(f"""
+        SELECT Courses.title || ' - ' || Validations.title 
+        FROM Validations
+        JOIN Courses ON Validations.course = Courses.id
+        WHERE Validations.id ={id}
+        """)
         # suppose that there is a solution
         return self.cursor.fetchall()[0][0]
 
@@ -256,9 +259,9 @@ class Model:
 
     # Get the name of a person given its ID.
     def getNameOfPerson(self, id):
-        self.cursor.execute("""
-        TODO25
-        """, id)
+        self.cursor.execute(f"""
+        SELECT first_name || ' ' || last_name FROM Persons WHERE id = {id}
+        """)
         # suppose that there is a solution
         return self.cursor.fetchall()[0][0]
 
@@ -266,9 +269,16 @@ class Model:
     # exam name, grade) of grades for a given student, sorted
     # by decreasing date of validation.
     def listValidationsOfStudent(self, idStudent):
-        self.cursor.execute("""
-        TODO26
-        """, idStudent)
+        self.cursor.execute(f"""
+        SELECT Validations.id, Validations.date, Curriculums.title, Courses.title, Validations.title, ROUND(Grades.grade::numeric, 2)
+        FROM Persons
+        JOIN Notes ON Notes.id_person = Persons.id
+        JOIN Validations ON Validations.id = Notes.id_validation
+        JOIN Curr_Courses ON Curr_Courses.course = Validations.course
+        JOIN Curriculums ON Curr_Courses.id_curr = Curriculums.id
+        JOIN Courses ON Courses.id = Validations.course
+        WHERE Persons.id = {idStudent}
+        """)
         return self.cursor.fetchall()
 
     # !!! HARD !!!
