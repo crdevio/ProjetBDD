@@ -231,7 +231,7 @@ class Model:
     def listGradesOfCourse(self, idCourse):
         self.cursor.execute("""
         SELECT 
-            Validations.id, Validations.date, Curriculums.title,
+            Validations.id, Validations.validation_date, Curriculums.title,
             Persons.last_name, Persons.first_name, Validations.title,
             Notes.note, Validations.coefficient
         FROM Notes
